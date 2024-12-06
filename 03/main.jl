@@ -28,23 +28,27 @@ function part2(filename)
     dontOffsets = [m.offset for m in skipCommand]
     doOffsets = [m.offset for m in performCommand]
 
-    matchIndex = 1
+    matchIndex = 0
     score = 0
     for i in 1:length(input)
         if matchIndex == length(allMatchesArr)
             break
         end
-        # println("no match $(i)")
-        if i == multOffsets[matchIndex]
+        if i == multOffsets[matchIndex+1]
             matchIndex += 1
             # go back until you hit a do or don't command
             j = i-1
-            while j >= 1
-                # stop once we hit the last match index
-                # if j == multOffsets[matchIndex-1]
-                #     print("reached last match")
-                #     break
-                if j in dontOffsets
+            while true
+                if j == 0
+                    # do the first one in the text always 
+                    println("do FIRST")
+                    left, right = split(allMatchesArr[matchIndex], ",")
+                    cleanedLeft = replace(left, r"\D" => "") |> (f->parse(Int, f))
+                    cleanedRight = replace(right, r"\D" => "") |> (f->parse(Int, f))
+                    score += cleanedLeft * cleanedRight
+                    println("$(allMatchesArr[matchIndex]) = $(cleanedLeft*cleanedRight)")
+                    break
+                elseif j in dontOffsets
                     # do not multiply this one
                     println("dont: $(j) < match index: $(multOffsets[matchIndex])")
                     break
@@ -56,7 +60,6 @@ function part2(filename)
                     cleanedRight = replace(right, r"\D" => "") |> (f->parse(Int, f))
                     score += cleanedLeft * cleanedRight
                     println("$(allMatchesArr[matchIndex]) = $(cleanedLeft*cleanedRight)")
-                    # println("$(multOffsets[j])")
                     break
                 end
                 j -= 1
