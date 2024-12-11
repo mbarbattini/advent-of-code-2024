@@ -33,7 +33,7 @@ function part1(filename)
     println("Score is $(score)")
 end
 
-part1(raw"05/input.txt")
+@time part1(raw"05/input.txt")
 
 
 
@@ -111,4 +111,4 @@ function part2(filename)
     println("Score is $(score)")
 end
 
-part2(raw"05/input.txt")
+@time part2(raw"05/input.txt")
