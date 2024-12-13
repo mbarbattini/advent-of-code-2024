@@ -25,58 +25,69 @@ function part1(filename)
     end
 
     visited = []
-    landPlots = Dict()
+    score = 0
 
     Q = Queue{Tuple}()
     for i in 1:nRows
         for j in 1:nCols
             if !((i,j) in visited)
+                landPlots = []
+                perimeter = 0
                 landChar = grid[i,j]
-                push!(visited, (i,j))
                 enqueue!(Q, (landChar,i,j))
                 # # flood fill
-                while !isempty(length(Q))
+                while !isempty(Q)
                     n = Base.first(Q)
                     dequeue!(Q)
                     # check they are the same char
                     if n[1] == landChar
-                        # add this coordinate to the score dict
-                        println("$(n[1]) @ ($(n[2]),$(n[3])) added")
-                        # add west
+                        if ((n[2], n[3]) in visited)
+                            continue
+                        end
+                        # add this coordinate to the score array
+                        push!(landPlots, (n[2], n[3]))
+                        push!(visited, (n[2],n[3]))
                         _i = n[2]+1
                         _j = n[3]
                         if inBounds(_i,_j)
-                            push!(visited, (_i,_j))
                             enqueue!(Q, (grid[_i,_j], _i, _j))
+                        else
+                            perimeter += 1 # out of bounds
                         end
                         _i = n[2]-1
                         _j = n[3]
                         if inBounds(_i,_j)
-                            push!(visited, (_i,_j))
                             enqueue!(Q, (grid[_i,_j], _i, _j))
+                        else
+                            perimeter += 1 # out of bounds
                         end
                         _i = n[2]
                         _j = n[3]+1
                         if inBounds(_i,_j)
-                            push!(visited, (_i,_j))
                             enqueue!(Q, (grid[_i,_j], _i, _j))
+                        else
+                            perimeter += 1 # out of bounds
                         end
                         _i = n[2]
                         _j = n[3]-1
                         if inBounds(_i,_j)
-                            push!(visited, (_i,_j))
                             enqueue!(Q, (grid[_i,_j], _i, _j))
+                        else
+                            perimeter += 1 # out of bounds
                         end
+                    else
+                        perimeter += 1 # checking cell in bounds and not visited, but its a different letter, so increase perimeter by 1
                     end
                 end
+                area = length(landPlots)
+                score += area * perimeter
             end
         end
     end
-    Q
+    println("Score is $(score)")
 end
 
-part1("12/example.txt")
-
+@time part1("12/input.txt")
 
 
 
